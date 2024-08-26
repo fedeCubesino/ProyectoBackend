@@ -4,7 +4,7 @@
       "title": "Vino Tinto A",
       "description": "Vino tinto seco con notas de roble.",
       "code": "VT101",
-      "price": 25.00,
+      "price": 25000,
       "stock": 100,
       "category": "Tintos",
       "thumbnails": ["/images/Chardonay.jfif"]
@@ -14,7 +14,7 @@
       "title": "Vino Blanco B",
       "description": "Vino blanco fresco con notas cítricas.",
       "code": "VB102",
-      "price": 20.00,
+      "price": 20000,
       "stock": 50,
       "category": "Blancos",
       "thumbnails": ["/images/Merlot.jfif"]
@@ -24,7 +24,7 @@
       "title": "Vino Rosado C",
       "description": "Vino rosado afrutado con aroma a fresas.",
       "code": "VR103",
-      "price": 18.00,
+      "price": 18000,
       "stock": 30,
       "category": "Rosados",
       "thumbnails": ["/images/Zinfandel.jfif"]
@@ -34,7 +34,7 @@
       "title": "Vino Espumoso D",
       "description": "Vino espumoso festivo con burbujas finas.",
       "code": "VE104",
-      "price": 30.00,
+      "price": 30000,
       "stock": 20,
       "category": "Espumosos",
       "thumbnails": ["/images/SauvignonBlanc.jfif"]
@@ -44,7 +44,7 @@
       "title": "Vino Dulce E",
       "description": "Vino dulce ideal para postres con sabor a miel.",
       "code": "VD105",
-      "price": 22.00,
+      "price": 22000,
       "stock": 15,
       "category": "Dulces",
       "thumbnails": ["/images/PinotNoir.jfif"]
