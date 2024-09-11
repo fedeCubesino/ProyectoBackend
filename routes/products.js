@@ -67,5 +67,20 @@ router.get('/:pid', async (req, res) => {
         res.status(500).send('Error interno del servidor');
     }
 });
+/* Ruta DELETE /:pid para eliminar un producto por ID */
+
+router.delete('/:pid', async (req, res) => {
+    try {
+        const productId = parseInt(req.params.pid);
+        let products = await readProducts(); 
+        products = products.filter(p => p.id !== productId); 
+
+        await writeProducts(products); 
+        res.status(200).send('Producto eliminado');
+    } catch (error) {
+        console.error('Error al eliminar producto:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
 
 export default router;

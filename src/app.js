@@ -6,7 +6,7 @@ import { readProducts, writeProducts } from '../fileService.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Obtener el directorio y nombre del archivo actual
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -14,20 +14,19 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-// Configuración de Handlebars
+
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
-app.set('views', path.join(__dirname, 'views')); // La ruta a la carpeta views está correcta
+app.set('views', path.join(__dirname, 'views')); 
 
-// Middleware
+
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 
-// Rutas
+
 app.get('/', async (req, res) => {
     try {
         const products = await readProducts();
-        
         res.render('home', { products });
     } catch (error) {
         console.error('Error al cargar productos:', error);
@@ -45,11 +44,11 @@ app.get('/realtimeproducts', async (req, res) => {
     }
 });
 
-// Configuración de Socket.IO
+
 io.on('connection', (socket) => {
     console.log('Nuevo cliente conectado');
 
-    // Emitir productos actuales a los nuevos clientes
+   
     socket.on('requestProducts', async () => {
         try {
             const products = await readProducts();
@@ -59,10 +58,11 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Escuchar eventos de creación de productos y emitir a todos los clientes conectados
+    
     socket.on('newProduct', async (product) => {
         try {
             const products = await readProducts();
+            product.id = products.length > 0 ? products[products.length - 1].id + 1 : 1; 
             products.push(product);
             await writeProducts(products);
             io.emit('products', products);
@@ -71,8 +71,9 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Escuchar eventos de eliminación de productos y emitir a todos los clientes conectados
+   
     socket.on('deleteProduct', async (productId) => {
+        console.log('ID del producto para eliminar:', productId);
         try {
             const products = await readProducts();
             const updatedProducts = products.filter(p => p.id !== productId);

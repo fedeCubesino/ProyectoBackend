@@ -49,30 +49,23 @@
   },
   {
     "id": 5,
-    "title": "Vino Dulce E",
-    "description": "Vino dulce ideal para postres con sabor a miel.",
-    "code": "VD105",
-    "price": 22000,
-    "stock": 15,
-    "category": "Dulces",
-    "thumbnails": [
-      "/images/PinotNoir.jfif"
-    ]
-  },
-  {
-    "title": "Nuevo Producto",
-    "price": 100
-  },
-  {
-    "title": "Nuevo Producto",
-    "price": 100
-  },
-  {
     "title": "malbec",
     "price": 5000,
     "description": "vino muy rico",
     "code": "35165135",
     "stock": 3,
     "category": "vino tinto"
+  },
+  {
+    "title": "cabernet",
+    "price": 25000,
+    "description": "mas rico que todos",
+    "code": "615164",
+    "stock": 6,
+    "category": "vino tinto",
+    "thumbnails": [
+      ""
+    ],
+    "id": 6
   }
 ]
