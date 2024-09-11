@@ -6,9 +6,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Definir las rutas a los archivos JSON
-const productsPath = path.join(__dirname, 'productos.json');
-const cartsPath = path.join(__dirname, 'carrito.json');
+// Definir las rutas a los archivos JSON en la raíz del proyecto
+const productsPath = path.join(__dirname, '..', 'ecommerce-server', 'productos.json');
+const cartsPath = path.join(__dirname, '..', 'ecommerce-server', 'carrito.json');
 
 // Leer un archivo JSON
 async function readJSON(filePath) {

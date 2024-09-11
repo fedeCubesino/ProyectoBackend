@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos en Tiempo Real</title>
+    <script src="/socket.io/socket.io.js"></script> <!-- Importa Socket.IO -->
+    <script>
+        const socket = io(); // Inicializa la conexión Socket.IO
+
+        // Escucha por eventos de 'products' desde el servidor
+        socket.on('products', (products) => {
+            const productsList = document.getElementById('products-list');
+            productsList.innerHTML = ''; // Limpia la lista actual
+
+            // Añade cada producto a la lista
+            products.forEach(product => {
+                const li = document.createElement('li');
+                li.textContent = `${product.title} - ${product.price}`; // Usa 'title' y 'price' según tu estructura de datos
+                productsList.appendChild(li);
+            });
+        });
+
+        // Función para mostrar la vista previa de la imagen
+        function previewImage() {
+            const thumbnailInput = document.getElementById('thumbnails');
+            const imagePreview = document.getElementById('image-preview');
+            const url = thumbnailInput.value;
+            if (url) {
+                imagePreview.src = url;
+                imagePreview.style.display = 'block';
+            } else {
+                imagePreview.style.display = 'none';
+            }
+        }
+
+        // Función para enviar un nuevo producto desde el formulario
+        function addProduct() {
+            const title = document.getElementById('title').value;
+            const price = parseFloat(document.getElementById('price').value);
+            const description = document.getElementById('description').value;
+            const code = document.getElementById('code').value;
+            const stock = parseInt(document.getElementById('stock').value);
+            const category = document.getElementById('category').value;
+            const thumbnails = document.getElementById('thumbnails').value.split(',').map(url => url.trim());
+
+            const newProduct = { title, price, description, code, stock, category, thumbnails };
+
+            socket.emit('newProduct', newProduct);
+        }
+    </script>
+    <style>
+        #image-preview {
+            max-width: 200px;
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Productos en Tiempo Real</h1>
+    <form id="addProductForm" onsubmit="event.preventDefault(); addProduct();">
+        <input type="text" id="title" placeholder="Título" required />
+        <input type="number" id="price" placeholder="Precio" required />
+        <input type="text" id="description" placeholder="Descripción" />
+        <input type="text" id="code" placeholder="Código" />
+        <input type="number" id="stock" placeholder="Stock" />
+        <input type="text" id="category" placeholder="Categoría" />
+        <input type="text" id="thumbnails" placeholder="Thumbnails (URL)" oninput="previewImage()" />
+        <img id="image-preview" src="" alt="Vista previa de la imagen" />
+        <button type="submit">Agregar Producto</button>
+    </form>
+    <ul id="products-list"></ul>
+</body>
+</html>
