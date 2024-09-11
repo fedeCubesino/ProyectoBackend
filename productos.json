@@ -67,5 +67,17 @@
       ""
     ],
     "id": 6
+  },
+  {
+    "title": "chardonay",
+    "price": 19000,
+    "description": "fresco ",
+    "code": "1165161",
+    "stock": 12,
+    "category": "vino blanco",
+    "thumbnails": [
+      "https://th.bing.com/th/id/R.f7a2df9bfbcc0e83d4630d3c09e8fc76?rik=77QlUWdTLDoYtw&pid=ImgRaw&r=0"
+    ],
+    "id": 7
   }
 ]

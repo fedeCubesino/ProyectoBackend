@@ -55,6 +55,8 @@
             const newProduct = { title, price, description, code, stock, category, thumbnails };
 
             socket.emit('newProduct', newProduct);
+            document.getElementById('addProductForm').reset();
+            document.getElementById('image-preview').style.display = 'none';
         }
 
         
