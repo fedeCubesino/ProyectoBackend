@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Productos</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Enlaza el archivo CSS -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Lista de Productos</h1>
+        </header>
+
+        <ul class="product-list">
+            {{#each products}}
+                <li class="product-card">
+                    <h2>{{this.name}}</h2> <!-- Cambiado de title a name -->
+                    <div class="product-info">
+                        {{#each this.thumbnails}}
+                            <img src="{{this}}" alt="{{../name}}" class="product-image">
+                        {{/each}}
+                        <div class="product-details">
+                            <p><strong>Descripción:</strong> {{this.description}}</p>
+                            <p><strong>Precio:</strong> ${{this.price}}</p>
+                            <p><strong>Stock:</strong> {{this.stock}}</p>
+                            <p><strong>Categoría:</strong> {{this.category}}</p>
+                        </div>
+                    </div>
+
+                    <!-- Formulario para agregar al carrito -->
+                    <form action="/api/carts/addProduct" method="POST" class="add-to-cart-form">
+                        <input type="hidden" name="productId" value="{{this._id}}">
+                        <input type="hidden" name="cartId" value="{{cartId}}">
+                        <label for="quantity">Cantidad:</label>
+                        <input type="number" name="quantity" value="1" min="1" max="{{this.stock}}" class="quantity-input">
+                        <button type="submit" class="add-to-cart-btn">Agregar al Carrito</button>
+                    </form>
+                </li>
+            {{/each}}
+        </ul>
+    </div>
+</body>
+</html>

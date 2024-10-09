@@ -1,0 +1,18 @@
+<h1>Tu Carrito de Compras</h1>
+
+{{#if cart.products.length}}
+    <ul>
+        {{#each cart.products}}
+            <li>
+                <h2>{{this.product.name}}</h2>
+                <p>{{this.product.description}}</p>
+                <p>Precio: {{this.product.price}}</p>
+                <p>Cantidad: {{this.quantity}}</p>
+                <p>Subtotal: {{multiply this.product.price this.quantity}}</p>
+            </li>
+        {{/each}}
+    </ul>
+    <p>Total: {{calculateTotal cart.products}}</p>
+{{else}}
+    <p>Tu carrito está vacío.</p>
+{{/if}}

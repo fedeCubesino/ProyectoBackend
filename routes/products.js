@@ -1,85 +1,110 @@
 import express from 'express';
-import { readProducts, writeProducts } from '../fileService.js'; 
-
+import Product from '../models/Products.js'; 
 const router = express.Router();
 
-/* Ruta POST / para agregar un nuevo producto */
-
-router.post('/', async (req, res) => {
-    try {
-        const { title, description, code, price, stock, category, thumbnails } = req.body;
-
-        if (!title || !description || !code || !price || !stock || !category) {
-            return res.status(400).send('Todos los campos son obligatorios, excepto thumbnails');
-        }
-
-        const products = await readProducts(); 
-        const newProduct = {
-            id: products.length > 0 ? products[products.length - 1].id + 1 : 1,
-            title,
-            description,
-            code,
-            price,
-            status: true,
-            stock,
-            category,
-            thumbnails: thumbnails || []
-        };
-
-        products.push(newProduct);
-        await writeProducts(products); 
-        res.status(201).json(newProduct);
-    } catch (error) {
-        console.error('Error al agregar producto:', error);
-        res.status(500).send('Error interno del servidor');
-    }
-});
-
-/* Ruta GET / para listar todos los productos con limitación */
-
+// Obtener productos con paginación, filtrado y ordenamiento
 router.get('/', async (req, res) => {
+    const { limit = 10, page = 1, sort, query } = req.query;
+
+    // Filtro por categoría o disponibilidad (query)
+    const filter = {};
+    if (query) {
+        filter.$or = [
+            { category: query }, 
+            { status: query === "true" } 
+        ];
+    }
+
     try {
-        const limit = parseInt(req.query.limit);
-        const products = await readProducts(); 
-        const limitedProducts = limit ? products.slice(0, limit) : products;
-        res.json(limitedProducts);
+        const totalProducts = await Product.countDocuments(filter); // Contar el total de productos
+        const totalPages = Math.ceil(totalProducts / limit);
+        const prevPage = page > 1 ? page - 1 : null;
+        const nextPage = page < totalPages ? page + 1 : null;
+        const hasPrevPage = prevPage !== null;
+        const hasNextPage = nextPage !== null;
+        const prevLink = hasPrevPage ? `http://localhost:3000/api/products?limit=${limit}&page=${prevPage}&sort=${sort}&query=${query}` : null;
+        const nextLink = hasNextPage ? `http://localhost:3000/api/products?limit=${limit}&page=${nextPage}&sort=${sort}&query=${query}` : null;
+
+        const products = await Product.find(filter)
+            .limit(Number(limit))
+            .skip((page - 1) * limit)
+            .sort(sort ? { price: sort } : {});
+
+        res.json({
+            status: 'success',
+            payload: products,
+            totalPages,
+            prevPage,
+            nextPage,
+            page: Number(page),
+            hasPrevPage,
+            hasNextPage,
+            prevLink,
+            nextLink,
+        });
     } catch (error) {
-        console.error('Error al listar productos:', error);
-        res.status(500).send('Error interno del servidor');
+        res.status(500).json({ status: 'error', message: error.message });
     }
 });
 
-/* Ruta GET /:pid para obtener un producto por ID */
 
+
+// Obtener un producto por ID
 router.get('/:pid', async (req, res) => {
+    const { pid } = req.params;
+
     try {
-        const productId = parseInt(req.params.pid);
-        const products = await readProducts(); 
-        const product = products.find(p => p.id === productId);
-
+        const product = await Product.findById(pid);
         if (!product) {
-            return res.status(404).send('Producto no encontrado');
+            return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
         }
-
-        res.json(product);
+        res.json({ status: 'success', data: product });
     } catch (error) {
-        console.error('Error al obtener producto por ID:', error);
-        res.status(500).send('Error interno del servidor');
+        res.status(500).json({ status: 'error', message: error.message });
     }
 });
-/* Ruta DELETE /:pid para eliminar un producto por ID */
 
-router.delete('/:pid', async (req, res) => {
+// Crear un nuevo producto
+router.post('/', async (req, res) => {
+    const { name, description, price, category, stock, status } = req.body;
+
     try {
-        const productId = parseInt(req.params.pid);
-        let products = await readProducts(); 
-        products = products.filter(p => p.id !== productId); 
-
-        await writeProducts(products); 
-        res.status(200).send('Producto eliminado');
+        const newProduct = new Product({ name, description, price, category, stock, status });
+        await newProduct.save();
+        res.status(201).json({ status: 'success', data: newProduct });
     } catch (error) {
-        console.error('Error al eliminar producto:', error);
-        res.status(500).send('Error interno del servidor');
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+});
+
+// Actualizar un producto
+router.put('/:pid', async (req, res) => {
+    const { pid } = req.params;
+    const updateData = req.body;
+
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(pid, updateData, { new: true });
+        if (!updatedProduct) {
+            return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
+        }
+        res.json({ status: 'success', data: updatedProduct });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+});
+
+// Eliminar un producto
+router.delete('/:pid', async (req, res) => {
+    const { pid } = req.params;
+
+    try {
+        const deletedProduct = await Product.findByIdAndDelete(pid);
+        if (!deletedProduct) {
+            return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
+        }
+        res.json({ status: 'success', message: 'Producto eliminado' });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
     }
 });
 
